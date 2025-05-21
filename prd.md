@@ -22,18 +22,19 @@ Many users in rural Rwanda do not have smartphones or internet access but do hav
 
 ### Flow
 
-1. User sends SMS → Received via **Supabase Edge Function**.
-2. Edge function processes the SMS and identifies user by phone number.
-3. Message sent to **Gemini API** with recent chat history.
-4. Response is enforced to fit 3 SMS messages (420 characters max).
-5. Response is sent back via **Pindo SMS API**.
-6. Message, response, and context are stored in a conversation database.
+1. User sends SMS → Received via **Android forwarding app**.
+2. Android app forwards message to **Supabase Edge Function** webhook.
+3. Edge function processes the SMS and identifies user by phone number.
+4. Message sent to **Gemini API** with recent chat history.
+5. Response is enforced to fit 3 SMS messages (420 characters max).
+6. Response is sent back via **Android forwarding app API**.
+7. Message, response, and context are stored in a conversation database.
 
 ### Key Technologies
 
+* **Android forwarding app** (SMS gateway and delivery)
 * **Supabase Edge Functions** (Message ingestion and routing)
 * **Gemini API** (LLM response generation)
-* **Pindo** (SMS delivery)
 * **PostgreSQL (via Supabase)** (Message and user state persistence)
 
 ## Functional Requirements
