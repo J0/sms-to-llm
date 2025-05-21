@@ -1,9 +1,12 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { GoogleGenAI } from "npm:@google/genai";
+import { saveConversation } from "../sms-webhook/utils/db.ts";
+
 console.info('SMS Webhook with Gemini SDK server started');
 const geminiClient = new GoogleGenAI({
   apiKey: Deno.env.get('GEMINI_API_KEY') // Replace with your actual Gemini API key
 });
+
 Deno.serve(async (req)=>{
   console.info('Received request:', {
     method: req.method,
@@ -51,12 +54,13 @@ Deno.serve(async (req)=>{
   // Call Gemini API with the text from the request
   let geminiResponse;
   try {
-    const systemPrompt = `You are a helpful AI assistant accessible via SMS in Rwanda. Follow these rules strictly:
-1. Keep responses under 420 characters (3 SMS messages max)
-2. Use plain text only - no markdown or formatting
-3. Be helpful and casual in tone
-4. Respond in the same language as the user's message (Kinyarwanda, French, or English)
-5. If the response would exceed 420 characters, prioritize the most important information`;
+    const systemPrompt = `
+    You are a helpful AI assistant accessible via SMS in Rwanda. Follow these rules strictly:
+    1. Keep responses under 420 characters (3 SMS messages max)
+    2. Use plain text only - no markdown or formatting
+    3. Be helpful and casual in tone
+    4. If the response would exceed 420 characters, prioritize the most important information
+    `;
 
     const prompt = `${systemPrompt}\n\nUser message: ${message}`;
     console.info('Sending prompt to Gemini:', prompt);
@@ -105,6 +109,15 @@ Deno.serve(async (req)=>{
 
     const successBody = await smsResponse.text();
     console.info('SMS sent successfully:', successBody);
+
+    // Only store the conversation if both LLM response and SMS sending were successful
+    try {
+      await saveConversation(phoneNumber, message, responseText, 'en');
+      console.info('Successfully stored conversation in database');
+    } catch (dbError) {
+      console.error('Failed to save conversation:', dbError);
+      // Don't return error response since the main functionality (SMS) was successful
+    }
 
     return new Response(JSON.stringify({
       status: 'success',
