@@ -14,9 +14,18 @@ Deno.serve(async (req)=>{
   // Call Gemini API with the text from the request
   let geminiResponse;
   try {
+    const systemPrompt = `You are a helpful AI assistant accessible via SMS in Rwanda. Follow these rules strictly:
+1. Keep responses under 420 characters (3 SMS messages max)
+2. Use plain text only - no markdown or formatting
+3. Be helpful and casual in tone
+4. Respond in the same language as the user's message (Kinyarwanda, French, or English)
+5. If the response would exceed 420 characters, prioritize the most important information`;
+
+    const prompt = `${systemPrompt}\n\nUser message: ${payload.text}`;
+
     geminiResponse = await geminiClient.models.generateContent({
       model: 'gemini-2.0-flash-001',
-      contents: payload.text
+      contents: prompt
     });
     console.log(geminiResponse.text);
   } catch (error) {
