@@ -14,41 +14,40 @@ Many users in rural Rwanda do not have smartphones or internet access but do hav
 
 ## Goals
 
-* Provide a seamless SMS interface to an LLM backend.
-* Ensure responses are concise, mobile-friendly, and formatted for SMS delivery.
+* ✅ Provide a seamless SMS interface to an LLM backend.
+* ✅ Ensure responses are concise, mobile-friendly, and formatted for SMS delivery.
 * Allow users to continue conversations via SMS with retained context for a limited time.
 
 ## Technical Architecture
 
 ### Flow
 
-1. User sends SMS → Received via **Android forwarding app**.
-2. Android app forwards message to **Supabase Edge Function** webhook.
-3. Edge function processes the SMS and identifies user by phone number.
-4. Message sent to **Gemini API** with recent chat history.
-5. Response is enforced to fit 3 SMS messages (420 characters max).
-6. Response is sent back via **Android forwarding app API**.
-7. Message, response, and context are stored in a conversation database.
+1. ✅ User sends SMS → Received via **Android forwarding app**.
+2. ✅ Android app forwards message to **Supabase Edge Function** webhook.
+3. ✅ Message sent to **Gemini API** with system prompt for SMS-optimized responses.
+4. ✅ Response is sent back via **Android SMS Gateway API**.
+5. ✅ Message, response, and context are stored in **Supabase PostgreSQL** database.
 
 ### Key Technologies
 
-* **Android forwarding app** (SMS gateway and delivery)
-* **Supabase Edge Functions** (Message ingestion and routing)
-* **Gemini API** (LLM response generation)
-* **PostgreSQL (via Supabase)** (Message and user state persistence)
+* ✅ **Android forwarding app** (SMS gateway and delivery)
+* ✅ **Supabase Edge Functions** (Message ingestion and routing)
+* ✅ **Gemini API** (LLM response generation)
+* ✅ **PostgreSQL (via Supabase)** (Message and user state persistence)
 
 ## Functional Requirements
 
 ### SMS Interaction
 
-* Responses must not exceed **3 SMS messages** (max 420 characters total).
-* No markdown or rich formatting.
-* Tone should be **helpful and casual**.
+* ✅ Responses must not exceed **3 SMS messages** (max 420 characters total).
+* ✅ No markdown or rich formatting.
+* ✅ Tone should be **helpful and casual**.
 * Support for **Kinyarwanda (primary)**, **French**, and **English**.
 
 ### User Identification & Session
 
-* User sessions are identified by **phone number**.
+* ✅ User sessions are identified by **phone number**.
+* ✅ Only Rwandan phone numbers (+250) are supported.
 * Retain conversation context for **48 hours** of inactivity.
 
 ### Commands
@@ -59,8 +58,9 @@ Many users in rural Rwanda do not have smartphones or internet access but do hav
 
 ### Error Handling
 
-* If LLM call fails, return: \*"Sorry, there was an error. Please try again later." in the same language as the question
-* Log errors with context (phone number, message, timestamp).
+* ✅ If LLM call fails, return: "Sorry, there was an error. Please try again later."
+* ✅ Log errors with context (phone number, message, timestamp).
+* ✅ Database errors are logged to console but don't block message delivery.
 
 ## Non-Functional Requirements
 
