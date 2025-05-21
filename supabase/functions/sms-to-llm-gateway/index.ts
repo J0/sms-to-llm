@@ -37,6 +37,15 @@ Deno.serve(async (req)=>{
   }
 
   const { message, phoneNumber } = payload.payload;
+  
+  // Validate Rwandan phone number
+  if (!phoneNumber.startsWith('+250')) {
+    console.warn('Non-Rwandan phone number:', phoneNumber);
+    return new Response('Only Rwandan phone numbers are supported', {
+      status: 400
+    });
+  }
+
   console.info('Processing SMS:', { message, phoneNumber });
   
   // Call Gemini API with the text from the request
