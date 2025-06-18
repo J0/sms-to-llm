@@ -21,6 +21,7 @@ SMS_GATEWAY_PUBLIC_USER=your_sms_gateway_username
 SMS_GATEWAY_PUBLIC_PASSWORD=your_sms_gateway_password
 SUPABASE_URL=your_supabase_url
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+SMS_GATEWAY_SIGNING_KEY=your_payload_signing_key
 ```
 
 ### Database Setup
