@@ -48,7 +48,7 @@ npm install
 
 2. Start the local development server:
 ```bash
-supabase functions serve sms-to-llm-gateway --no-verify-jwt
+supabase functions serve sms-to-llm-gateway --no-verify-jwt --env-file ./supabase/functions/sms-to-llm-gateway/.env
 ```
 
 ### Deployment

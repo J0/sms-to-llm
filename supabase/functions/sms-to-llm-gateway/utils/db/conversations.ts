@@ -1,11 +1,12 @@
-import { createClient } from 'jsr:@supabase/supabase-js@2'
-import { Database } from '../../../types.ts';
+import { supabase } from './client.ts';
 
-const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-
-const supabase = createClient<Database>(supabaseUrl, supabaseServiceKey);
-
+/**
+ * Save a conversation to the database.
+ * @param phoneNumber The user's phone number
+ * @param messageContent The incoming SMS message
+ * @param responseContent The LLM's response
+ * @param language The language code (default: 'en')
+ */
 export async function saveConversation(
     phoneNumber: string,
     messageContent: string,
@@ -31,6 +32,11 @@ export async function saveConversation(
     return data;
 }
 
+/**
+ * Get recent conversations for a phone number within the last N hours.
+ * @param phoneNumber The user's phone number
+ * @param hours How many hours back to look (default: 48)
+ */
 export async function getRecentConversations(phoneNumber: string, hours: number = 48) {
     const { data, error } = await supabase
         .from('conversations')
@@ -45,4 +51,4 @@ export async function getRecentConversations(phoneNumber: string, hours: number 
     }
 
     return data;
-} 
+}
