@@ -12,7 +12,12 @@ Deno.serve(async (req) => {
   if (result instanceof Response) return result;
 
   const { message, phoneNumber } = result.payload;
-  
+  const CURRENT_NUMBER = Deno.env.get("CURRENT_NUMBER");
+
+  if (phoneNumber === `${CURRENT_NUMBER}`) {
+    return new Response('You cannot text yourself', { status: 400 });
+  }
+
   if (!phoneNumber.startsWith('+250')) {
     return new Response('Only Rwandan phone numbers are supported', { status: 400 });
   }
