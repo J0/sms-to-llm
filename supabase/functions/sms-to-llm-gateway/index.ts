@@ -12,20 +12,24 @@ Deno.serve(async (req) => {
   if (result instanceof Response) return result;
 
   const { message, phoneNumber } = result.payload;
-  const CURRENT_NUMBER = Deno.env.get("CURRENT_NUMBER");
+  const AI_NUMBER_1 = Deno.env.get("AI_NUMBER_1");
+  const AI_NUMBER_2 = Deno.env.get("AI_NUMBER_2");
 
-  if (phoneNumber === `${CURRENT_NUMBER}`) {
-    return new Response('You cannot text yourself', { status: 400 });
+  if (phoneNumber === `${AI_NUMBER_1}` || phoneNumber === `${AI_NUMBER_2}`) {
+    return new Response('You AI number is not allowed to text!', { status: 400 });
   }
-
-  if (!phoneNumber.startsWith('+250')) {
-    return new Response('Only Rwandan phone numbers are supported', { status: 400 });
-  }
-
   try {
     const context = await getContext(phoneNumber);
     const geminiResponse = await getGeminiResponse(message, context);
-    await sendSMS(phoneNumber, geminiResponse);
+
+    let authUrl;
+    if (phoneNumber.startsWith("+25078") || phoneNumber.startsWith("+25079")) {
+      authUrl = `Basic ${btoa(`${Deno.env.get("SMS_GATEWAY_PUBLIC_USER_2")}:${Deno.env.get("SMS_GATEWAY_PUBLIC_PASSWORD_2")}`)}`
+    } else {
+      authUrl = `Basic ${btoa(`${Deno.env.get("SMS_GATEWAY_PUBLIC_USER_1")}:${Deno.env.get("SMS_GATEWAY_PUBLIC_PASSWORD_1")}`)}`
+    }
+
+    await sendSMS(phoneNumber, geminiResponse, authUrl);
     
     try {
       await saveConversation(phoneNumber, message, geminiResponse, 'en');

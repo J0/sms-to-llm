@@ -3,13 +3,13 @@
  * @param phoneNumber The recipient's phone number
  * @param message The message to send
  */
-export async function sendSMS(phoneNumber: string, message: string) {
+export async function sendSMS(phoneNumber: string, message: string, authUrl : string) {
   const response = await fetch('https://api.sms-gate.app/3rdparty/v1/message', {
     method: 'POST',
     headers: {
       'Accept': '*/*',
       'Content-Type': 'application/json',
-      'Authorization': `Basic ${btoa(`${Deno.env.get("SMS_GATEWAY_PUBLIC_USER")}:${Deno.env.get("SMS_GATEWAY_PUBLIC_PASSWORD")}`)}`
+      'Authorization': authUrl
     },
     body: JSON.stringify({
       message,
